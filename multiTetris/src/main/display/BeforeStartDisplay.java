@@ -9,13 +9,16 @@ public class BeforeStartDisplay implements IGamePageDisplay{
 	private PApplet pApplet;
 	private Background background;
 	
-	public BeforeStartDisplay(PApplet pApplet, int playerPerson) {
+	public BeforeStartDisplay(PApplet pApplet) {
 		this.pApplet = pApplet;
-		this.background = new Background(pApplet, playerPerson);
+		this.background = new Background(pApplet);
 	}
 	
 	public Background getBackground(int playerPerson) {
-		if(playerPerson != 1) Background.playerPerson = playerPerson;
+		if(playerPerson != 1) {
+			Background.playerPerson = playerPerson;
+			this.background.setSize();
+		}
 		
 		return this.background;
 	}

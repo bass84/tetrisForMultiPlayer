@@ -13,12 +13,13 @@ public class Background{
 	public static float offsetX;
 	public static float offsetY;
 	public static float offsetX2;
-	public static int playerPerson; 
+	public static int playerPerson = 1; 
 	
-	public Background(PApplet pApplet, int playerPerson) {
+	public Background(PApplet pApplet) {
 		this.pApplet = pApplet;
-		Background.playerPerson = playerPerson;
-		
+	}
+	
+	public void setSize() {
 		// 멀티플레이를 할 경우 윈도우 사이즈 가로를 두배로 늘린다.
 		if(playerPerson == 2){
 			this.pApplet.getSurface().setSize(this.pApplet.width * 2, this.pApplet.height);
