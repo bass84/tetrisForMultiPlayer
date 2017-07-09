@@ -5,12 +5,9 @@ import java.util.Arrays;
 import java.util.Random;
 
 import main.ShapeMapping.Kind;
-import main.display.Background;
-import main.display.SingleBackground;
-import main.pages.PlayPageDisplay;
 import processing.core.PApplet;
 
-public class Shape implements BlockDraw, Serializable, Cloneable{
+public class Shape implements Serializable, Cloneable{
 	/**
 	 * 
 	 */
@@ -76,27 +73,31 @@ public class Shape implements BlockDraw, Serializable, Cloneable{
 		return null;
 	}
 
-	@Override
-	public void drawShape(int[][] usedBlock, Shape shape) {
+	/*@Override
+	public void drawShape(int[][] usedBlock, Shape shape, int player) {
 		int shapeColor = shape.getShapeColor();
 		for(int i = 0; i < this.shapeInfo.length; i++) {
 			pApplet.fill(shapeColor, 255);
 			
-			//draw 1 player
-			pApplet.rect(
-					(this.shapeInfo[i][0] + this.positionX) * (Background.width / PlayPageDisplay.widthblock) + Background.offsetX
-					, (this.shapeInfo[i][1] + this.positionY) * (Background.height / PlayPageDisplay.heightblock) + Background.offsetY
-					, (Background.width / PlayPageDisplay.widthblock)
-					, (Background.height/ PlayPageDisplay.heightblock));
-			//draw 2 player
-			pApplet.rect(
-					(this.shapeInfo[i][0] + this.positionX) * (Background.width / PlayPageDisplay.widthblock) + Background.offsetX2
-					, (this.shapeInfo[i][1] + this.positionY) * (Background.height / PlayPageDisplay.heightblock) + Background.offsetY
-					, (Background.width / PlayPageDisplay.widthblock)
-					, (Background.height/ PlayPageDisplay.heightblock));
+			if(player == 1) {
+				pApplet.rect(
+						(this.shapeInfo[i][0] + this.positionX) * (Tetris.width / Tetris.widthblock) + Tetris.offsetX
+						, (this.shapeInfo[i][1] + this.positionY) * (Tetris.height / Tetris.heightblock) + Tetris.offsetY
+						, (Tetris.width / Tetris.widthblock)
+						, (Tetris.height/ Tetris.heightblock));
+			}
+			else {
+				pApplet.rect(
+						(this.shapeInfo[i][0] + this.positionX) * (Tetris.width / Tetris.widthblock) + Tetris.offsetX2
+						, (this.shapeInfo[i][1] + this.positionY) * (Tetris.height / Tetris.heightblock) + Tetris.offsetY
+						, (Tetris.width / Tetris.widthblock)
+						, (Tetris.height/ Tetris.heightblock));
+				
+			}
+				
 		}
 		
-	}
+	}*/
 
 	@Override
 	public String toString() {

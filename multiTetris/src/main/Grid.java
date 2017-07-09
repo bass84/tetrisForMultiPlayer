@@ -4,12 +4,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import main.display.Background;
-import main.display.SingleBackground;
-import main.pages.PlayPageDisplay;
+import main.pages.PlayPage;
 import processing.core.PApplet;
 
-public class Grid implements BlockDraw{
+public class Grid {
 	private PApplet pApplet;
 	
 	public Grid(PApplet pApplet) {
@@ -85,32 +83,34 @@ public class Grid implements BlockDraw{
 	}
 
 	
-	@Override
-	public void drawShape(int[][] usedBlock, Shape shape) {
+	/*@Override
+	public void drawShape(int[][] usedBlock, Shape shape, int player) {
 		for(int i = 1; i < usedBlock.length; i++) {
 			for(int j = 0; j < usedBlock[i].length - 1; j++) {
 				if(usedBlock[i][j] == -1 || usedBlock[i][j] != 0) {
 					pApplet.fill(usedBlock[i][j], 255);
+					if(player == 1) {
+						pApplet.rect(
+								(i * (Tetris.width / Tetris.widthblock)) - (Tetris.width / Tetris.widthblock) + Tetris.offsetX
+								, (j * (Tetris.height / Tetris.heightblock)) + Tetris.offsetY
+								, Tetris.width / Tetris.widthblock
+								, Tetris.height / Tetris.heightblock);
+						
+					}else{
+						pApplet.rect(
+								(i * (Tetris.width / Tetris.widthblock)) - (Tetris.width / Tetris.widthblock) + Tetris.offsetX2
+								, (j * (Tetris.height / Tetris.heightblock)) + Tetris.offsetY
+								, Tetris.width / Tetris.widthblock
+								, Tetris.height / Tetris.heightblock);
+						
+					}
 					
-					//draw 1 player
-					pApplet.rect(
-							(i * (Background.width / PlayPageDisplay.widthblock)) - (Background.width / PlayPageDisplay.widthblock) + Background.offsetX
-							, (j * (Background.height / PlayPageDisplay.heightblock)) + Background.offsetY
-							, Background.width / PlayPageDisplay.widthblock
-							, Background.height / PlayPageDisplay.heightblock);
-					
-					//draw 2 player
-					pApplet.rect(
-							(i * (Background.width / PlayPageDisplay.widthblock)) - (Background.width / PlayPageDisplay.widthblock) + Background.offsetX2
-							, (j * (Background.height / PlayPageDisplay.heightblock)) + Background.offsetY
-							, Background.width / PlayPageDisplay.widthblock
-							, Background.height / PlayPageDisplay.heightblock);
 				}
 			}
 		}
-	}
+	}*/
 
-	public int[][] getNewGridLine(int[][] usedBlock, Shape shape, PlayPageDisplay playingPage) {
+	public int[][] getNewGridLine(int[][] usedBlock, Shape shape, Tetris playingPage) {
 		List<Integer> removeLines = new ArrayList<Integer>();
 		
 		for(int i = usedBlock[0].length - 2; i >= 0; i--) {	// 행 안에 비어있는 블록이 있는지 체크
@@ -129,7 +129,7 @@ public class Grid implements BlockDraw{
 	}
 
 
-	private int[][] removeLines(int[][] usedBlock, List<Integer> removeLines, PlayPageDisplay PlayingPage) {	//행을 지우는 메서드
+	private int[][] removeLines(int[][] usedBlock, List<Integer> removeLines, Tetris PlayingPage) {	//행을 지우는 메서드
 		Collections.sort(removeLines);
 		
 		for(int i = 0; i < removeLines.size(); i++) {
