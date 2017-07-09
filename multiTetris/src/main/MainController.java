@@ -20,7 +20,6 @@ public class MainController extends PApplet{
 		background(48);
 		surface.setResizable(true);
 		this.navigator = new Navigator();
-		//BeforeStartPage.getBeforeStartPage().init(this, navigator);
 		new BeforeStartPage(this, navigator);
 		
 	}

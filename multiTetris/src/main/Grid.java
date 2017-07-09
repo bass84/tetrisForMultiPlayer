@@ -4,15 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import main.pages.PlayPage;
-import processing.core.PApplet;
-
 public class Grid {
-	private PApplet pApplet;
-	
-	public Grid(PApplet pApplet) {
-		this.pApplet = pApplet;
-	}
 	
 	public boolean isBottom(int[][] usedBlock, Shape shape){
 		int[][] shapeInfo = shape.getShapeInfo();
@@ -81,34 +73,7 @@ public class Grid {
 		}
 		return true;
 	}
-
 	
-	/*@Override
-	public void drawShape(int[][] usedBlock, Shape shape, int player) {
-		for(int i = 1; i < usedBlock.length; i++) {
-			for(int j = 0; j < usedBlock[i].length - 1; j++) {
-				if(usedBlock[i][j] == -1 || usedBlock[i][j] != 0) {
-					pApplet.fill(usedBlock[i][j], 255);
-					if(player == 1) {
-						pApplet.rect(
-								(i * (Tetris.width / Tetris.widthblock)) - (Tetris.width / Tetris.widthblock) + Tetris.offsetX
-								, (j * (Tetris.height / Tetris.heightblock)) + Tetris.offsetY
-								, Tetris.width / Tetris.widthblock
-								, Tetris.height / Tetris.heightblock);
-						
-					}else{
-						pApplet.rect(
-								(i * (Tetris.width / Tetris.widthblock)) - (Tetris.width / Tetris.widthblock) + Tetris.offsetX2
-								, (j * (Tetris.height / Tetris.heightblock)) + Tetris.offsetY
-								, Tetris.width / Tetris.widthblock
-								, Tetris.height / Tetris.heightblock);
-						
-					}
-					
-				}
-			}
-		}
-	}*/
 
 	public int[][] getNewGridLine(int[][] usedBlock, Shape shape, Tetris playingPage) {
 		List<Integer> removeLines = new ArrayList<Integer>();

@@ -5,14 +5,12 @@ import java.util.Arrays;
 import java.util.Random;
 
 import main.ShapeMapping.Kind;
-import processing.core.PApplet;
 
 public class Shape implements Serializable, Cloneable{
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 7231162489919433626L;
-	private transient PApplet pApplet;
 	private int[][] shapeInfo;
 	private ShapeMapping shapeMapping;
 	private Kind shapeKind;
@@ -22,8 +20,7 @@ public class Shape implements Serializable, Cloneable{
 	private int curRotationIdx;
 	private int shapeColor;
 	
-	public Shape(PApplet pApplet) {
-		this.pApplet = pApplet;
+	public Shape() {
 		int kindIndex = new Random().nextInt(Kind.values().length);
 		for(Kind kind : Kind.values()) {
 			if(kind.ordinal() == kindIndex) this.shapeKind = kind; 
@@ -73,31 +70,6 @@ public class Shape implements Serializable, Cloneable{
 		return null;
 	}
 
-	/*@Override
-	public void drawShape(int[][] usedBlock, Shape shape, int player) {
-		int shapeColor = shape.getShapeColor();
-		for(int i = 0; i < this.shapeInfo.length; i++) {
-			pApplet.fill(shapeColor, 255);
-			
-			if(player == 1) {
-				pApplet.rect(
-						(this.shapeInfo[i][0] + this.positionX) * (Tetris.width / Tetris.widthblock) + Tetris.offsetX
-						, (this.shapeInfo[i][1] + this.positionY) * (Tetris.height / Tetris.heightblock) + Tetris.offsetY
-						, (Tetris.width / Tetris.widthblock)
-						, (Tetris.height/ Tetris.heightblock));
-			}
-			else {
-				pApplet.rect(
-						(this.shapeInfo[i][0] + this.positionX) * (Tetris.width / Tetris.widthblock) + Tetris.offsetX2
-						, (this.shapeInfo[i][1] + this.positionY) * (Tetris.height / Tetris.heightblock) + Tetris.offsetY
-						, (Tetris.width / Tetris.widthblock)
-						, (Tetris.height/ Tetris.heightblock));
-				
-			}
-				
-		}
-		
-	}*/
 
 	@Override
 	public String toString() {

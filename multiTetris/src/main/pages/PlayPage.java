@@ -1,38 +1,30 @@
 package main.pages;
 
-import main.Shape;
-import main.ShapeMapping.Kind;
 import main.Tetris;
 import pages.IPage;
 import processing.core.PApplet;
-import processing.core.PFont;
 
 public class PlayPage extends IPage{
 	
 	private PApplet pApplet;
-	private PFont mono;
-	//private int player;
 	private Tetris[] tetris;
-	
-
 	
 	public PlayPage(PApplet pApplet, int player) {
 		this.pApplet = pApplet;
-		//this.player = player;
 		this.tetris = new Tetris[player];
 		for(int i = 0; i < this.tetris.length; i++) {
-			this.tetris[i] = new Tetris(pApplet, i + 1);
+			this.tetris[i] = new Tetris(pApplet, i + 1, player);
 		}
+		this.pApplet.getSurface().setSize(this.pApplet.width * 2, this.pApplet.height);
 	}
-	
 	
 
 	@Override
 	public void drawPage() {
+		this.pApplet.clear();
 		for(int i = 0; i < this.tetris.length; i++) {
 			this.tetris[i].drawTetris();
 		}
-		
 	}
 
 	@Override
