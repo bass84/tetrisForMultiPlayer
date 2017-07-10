@@ -40,23 +40,7 @@ public class Tetris {
 		for(int i = 0; i < this.usedBlock.length; ++i) this.usedBlock[i][15] = -1;
 		for(int i = 0; i < this.usedBlock[0].length; ++i) this.usedBlock[0][i] = -1;
 	}
-	
-
-	/*public Shape getShape() {
-		return this.shape;
-	}
-	public int[][] getUsedBlock() {
-		return this.usedBlock;
-	}
-	public Grid getGrid() {
-		return this.grid;
-	}
-	public int getTotalScore() {
-		return this.totalScore;
-	}
-	public void setShape(Shape shape) {
-		this.shape = shape;
-	}*/
+		
 	public void setUsedBlock(int[][] usedBlock) {
 		for(int i = 0; i < usedBlock.length; i++) {
 			for(int j = 0; j < usedBlock[i].length; j++) {
@@ -65,10 +49,6 @@ public class Tetris {
 		}
 	}
 	
-	
-	/*public void setGrid(Grid grid) {
-		this.grid = grid;
-	}*/
 	public void setTotalScore(int totalScore) {
 		this.totalScore = totalScore;
 	}
@@ -111,7 +91,6 @@ public class Tetris {
 	
 	
 	public void drawBackground(){
-		
 		// 현재 창의 크기
 		width = this.pApplet.width / this.totalPerson;
 		height = this.pApplet.height;
@@ -155,8 +134,7 @@ public class Tetris {
 			this.drawShape();
 			
 			// 바닥에 닿지 않으면 계속 내려감
-			if(pApplet.frameCount % this.term == 0) this.shape.increasePositionY();
-			
+			this.moveShapeDownByTime();
 			
 			// draw text
 			this.mono = pApplet.createFont("mono", width / 30);
@@ -190,6 +168,7 @@ public class Tetris {
 	
 	public void drawShape() {
 		int shapeColor = this.shape.getShapeColor();
+		
 		for(int i = 0; i < this.shapeInfo.length; i++) {
 			pApplet.fill(shapeColor, 255);
 			pApplet.rect(
@@ -201,17 +180,38 @@ public class Tetris {
 		}
 	}
 	
+	public void moveShapeDownByTime() {
+		if(pApplet.frameCount % this.term == 0) this.shape.increasePositionY();
+	}
+	
+	public void moveShapeLeft() {
+		if(!grid.isLeftEnd(usedBlock, shape)) shape.decreasePositionX();
+	}
+	
+	public void moveShapeRight() {
+		if(!grid.isRightEnd(usedBlock, shape)) shape.increasePositionX();
+	}
+	
+	public void moveShapeDown() {
+		if(!grid.isBottom(usedBlock, shape)) shape.increasePositionY();
+	}
+	
+	public void rotateShape() {
+		if(shape.getShapeKind() == Kind.O || !grid.isPossibleRotation(usedBlock, shape)) return;
+		shape.rotate();
+		shape.increaseRotationIdx();
+		this.shapeInfo = this.shape.getShapeInfo();
+	}
 	
 	
 	
-	public void keyPressed(int keyCode) {
+	/*public void keyPressed(int keyCode) {
 		
 		if(grid.isBottom(usedBlock, shape)) return;
 		
 		switch(keyCode) {
 			case(37) :	//left
 				if(!grid.isLeftEnd(usedBlock, shape)) shape.decreasePositionX();
-				
 				break;
 			
 			case(38) :	//up
@@ -219,17 +219,14 @@ public class Tetris {
 				shape.rotate();
 				shape.increaseRotationIdx();
 				this.shapeInfo = this.shape.getShapeInfo();
-				
 				break;
 			
 			case(39) :	//right
 				if(!grid.isRightEnd(usedBlock, shape)) shape.increasePositionX();
-				
 				break;
 			
 			case(40) :	//down
 				if(!grid.isBottom(usedBlock, shape)) shape.increasePositionY();
-				
 				break;
 			
 			case(80) :	// 'p' - pause
@@ -237,5 +234,5 @@ public class Tetris {
 				//this.navigator.peek();
 				break;
 		}
-	}
+	}*/
 }
