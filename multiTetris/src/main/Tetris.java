@@ -16,7 +16,7 @@ public class Tetris {
 	private Shape shape;
 	private Grid grid;
 	private int totalScore = 0;
-	private int term = 60;
+	private int interval = 60;
 	private int[][] usedBlock = new int[11][16];
 	private int player;
 	private int[][] shapeInfo;
@@ -108,12 +108,14 @@ public class Tetris {
 		
 	}
 	
-	public void drawTetris() {
+	public boolean drawTetris() {
 		// 도형이 바닥에 닿는다면
 		if(this.grid.isBottom(this.usedBlock, this.shape)) {
 			
-			if(this.grid.checkGameOver(this.usedBlock, this.shape)) {
-				return;
+			if(this.checkGameOver()) {
+				System.out.println("Game Over!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+				this.drawGameOver();
+				return false;
 			}else{
 				this.addUsedBlock(shape, usedBlock);
 				this.increaseTotalScore(1000);
@@ -143,10 +145,22 @@ public class Tetris {
 			pApplet.textAlign(PConstants.LEFT, PConstants.CENTER);
 			pApplet.text("SCORE : " + this.totalScore, offsetX + (2.0f * ratio)
 					, offsetY + (8.0f * ratio));
-			
-			
 		}
 		
+		return true;
+	}
+	
+	public void drawGameOver() {
+		for(int i = 1; i < usedBlock.length; i++) {
+			for(int j = 0; j < usedBlock[i].length - 1; j++) {
+				pApplet.fill(255);
+				pApplet.rect(
+						(i * (width / widthblock)) - (width / widthblock) + offsetX
+						, (j * (height / heightblock)) + offsetY
+						, width / widthblock
+						, height / heightblock);
+			}
+		}
 	}
 	
 	
@@ -168,20 +182,34 @@ public class Tetris {
 	
 	public void drawShape() {
 		int shapeColor = this.shape.getShapeColor();
-		
 		for(int i = 0; i < this.shapeInfo.length; i++) {
 			pApplet.fill(shapeColor, 255);
 			pApplet.rect(
 					(this.shapeInfo[i][0] + this.shape.getPositionX()) * (width / widthblock) + offsetX
 					, (this.shapeInfo[i][1] + this.shape.getPositionY()) * (height / heightblock) + offsetY
 					, (width / widthblock)
-					, (height/ heightblock));
+					, (height / heightblock));
 				
 		}
 	}
 	
+	public boolean checkGameOver() {
+		for(int i = 0; i < this.shapeInfo.length; i++) {
+			if((this.shapeInfo[i][1] + this.shape.getPositionY()) == 0) {
+				// 도형 전체 그리기
+				this.drawGrid();
+				
+				// 현재 움직이는 도형 그리기
+				this.drawShape();
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	
 	public void moveShapeDownByTime() {
-		if(pApplet.frameCount % this.term == 0) this.shape.increasePositionY();
+		if(pApplet.frameCount % this.interval == 0) this.shape.increasePositionY();
 	}
 	
 	public void moveShapeLeft() {
@@ -203,36 +231,10 @@ public class Tetris {
 		this.shapeInfo = this.shape.getShapeInfo();
 	}
 	
-	
-	
-	/*public void keyPressed(int keyCode) {
-		
-		if(grid.isBottom(usedBlock, shape)) return;
-		
-		switch(keyCode) {
-			case(37) :	//left
-				if(!grid.isLeftEnd(usedBlock, shape)) shape.decreasePositionX();
-				break;
-			
-			case(38) :	//up
-				if(shape.getShapeKind() == Kind.O || !grid.isPossibleRotation(usedBlock, shape)) return;
-				shape.rotate();
-				shape.increaseRotationIdx();
-				this.shapeInfo = this.shape.getShapeInfo();
-				break;
-			
-			case(39) :	//right
-				if(!grid.isRightEnd(usedBlock, shape)) shape.increasePositionX();
-				break;
-			
-			case(40) :	//down
-				if(!grid.isBottom(usedBlock, shape)) shape.increasePositionY();
-				break;
-			
-			case(80) :	// 'p' - pause
-				//this.navigator.push(new MenuPage(this.navigator));
-				//this.navigator.peek();
-				break;
+	public void dropShape() {
+		while(!this.grid.isBottom(this.usedBlock, this.shape)) {
+			this.shape.increasePositionY();
 		}
-	}*/
+	}
+	
 }

@@ -21,8 +21,11 @@ public class PlayPage extends IPage{
 
 	@Override
 	public void drawPage() {
-		this.pApplet.clear();
+		//this.pApplet.clear();
+		
 		for(int i = 0; i < this.tetris.length; i++) {
+			//if(i == 0) this.pApplet.clear();
+			
 			this.tetris[i].drawTetris();
 		}
 	}
@@ -31,6 +34,9 @@ public class PlayPage extends IPage{
 	public void keyPressed(int keyCode) {
 		
 		switch(keyCode) {
+			case 32 :
+				this.tetris[1].dropShape();
+				break;
 			case 37 : 
 				this.tetris[1].moveShapeLeft();
 				break;
@@ -43,16 +49,20 @@ public class PlayPage extends IPage{
 			case 40 : 
 				this.tetris[1].moveShapeDown();
 				break;
-			case 68 :
+				
+			case 9 :
+				this.tetris[0].dropShape();
+				break;
+			case 68 : //d
 				this.tetris[0].moveShapeLeft();
 				break;
-			case 82 :
+			case 82 : //r
 				this.tetris[0].rotateShape();
 				break;
-			case 71 :
+			case 71 : //g
 				this.tetris[0].moveShapeRight();
 				break;
-			case 70 :
+			case 70 : //f
 				this.tetris[0].moveShapeDown();
 				break;
 		}
