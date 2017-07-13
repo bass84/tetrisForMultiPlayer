@@ -103,8 +103,19 @@ public class Tetris {
 		this.makeOffsetY();
 		
 		// 창 안 게임 영역 그리기
-		this.pApplet.fill(255, 255, 255);
-		this.pApplet.rect(offsetX, offsetY, width, height);
+		for(int i = 1; i < usedBlock.length; i++) {
+			for(int j = 0; j < usedBlock[i].length - 1; j++) {
+				pApplet.fill(255, 255, 242);
+				pApplet.rect(
+						(i * (width / widthblock)) - (width / widthblock) + offsetX
+						, (j * (height / heightblock)) + offsetY
+						, width / widthblock
+						, height / heightblock);
+			}
+		}
+		
+		
+		
 		
 	}
 	
@@ -151,16 +162,8 @@ public class Tetris {
 	}
 	
 	public void drawGameOver() {
-		for(int i = 1; i < usedBlock.length; i++) {
-			for(int j = 0; j < usedBlock[i].length - 1; j++) {
-				pApplet.fill(255);
-				pApplet.rect(
-						(i * (width / widthblock)) - (width / widthblock) + offsetX
-						, (j * (height / heightblock)) + offsetY
-						, width / widthblock
-						, height / heightblock);
-			}
-		}
+		this.pApplet.fill(0);
+		this.pApplet.rect(offsetX, offsetY, width, height);
 	}
 	
 	
