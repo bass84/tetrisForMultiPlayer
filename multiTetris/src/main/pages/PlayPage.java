@@ -1,6 +1,8 @@
 package main.pages;
 
+import main.RoomConnect.ConnectType;
 import main.Tetris;
+import main.keyEvent.GameKeyType.GameKey;
 import pages.IPage;
 import processing.core.PApplet;
 
@@ -21,49 +23,51 @@ public class PlayPage extends IPage{
 
 	@Override
 	public void drawPage() {
-		//this.pApplet.clear();
-		
 		for(int i = 0; i < this.tetris.length; i++) {
-			//if(i == 0) this.pApplet.clear();
-			
 			this.tetris[i].drawTetris();
+			
+			/*시간이 되면 도형이 내려가는 프로세스*/
+			if(this.pApplet.frameCount % this.tetris[i].getInterval() == 0) {
+				this.tetris[i].move(GameKey.MOVE_SHAPE_DOWN_BY_TIME);
+			}
 		}
 	}
 
 	@Override
 	public void keyPressed(int keyCode) {
 		
+		
 		switch(keyCode) {
 			case 32 :
-				this.tetris[1].dropShape();
+				this.tetris[1].move(GameKey.DROP_SHAPE);
 				break;
-			case 37 : 
-				this.tetris[1].moveShapeLeft();
+			case 37 :
+				this.tetris[1].move(GameKey.MOVE_SHAPE_LEFT);
 				break;
-			case 38 : 
-				this.tetris[1].rotateShape();
+			case 38 :
+				this.tetris[1].move(GameKey.ROTATE_SHAPE);
 				break;
-			case 39 : 
-				this.tetris[1].moveShapeRight();
+			case 39 :
+				this.tetris[1].move(GameKey.MOVE_SHAPE_RIGHT);
 				break;
 			case 40 : 
-				this.tetris[1].moveShapeDown();
+				this.tetris[1].move(GameKey.MOVE_SHAPE_DOWN);
 				break;
 				
 			case 9 :
-				this.tetris[0].dropShape();
+				this.tetris[0].move(GameKey.DROP_SHAPE);
 				break;
 			case 68 : //d
-				this.tetris[0].moveShapeLeft();
+				this.tetris[0].move(GameKey.MOVE_SHAPE_LEFT);
 				break;
 			case 82 : //r
-				this.tetris[0].rotateShape();
+				this.tetris[0].move(GameKey.ROTATE_SHAPE);
 				break;
 			case 71 : //g
-				this.tetris[0].moveShapeRight();
+				this.tetris[0].move(GameKey.MOVE_SHAPE_RIGHT);
 				break;
 			case 70 : //f
-				this.tetris[0].moveShapeDown();
+				this.tetris[0].move(GameKey.MOVE_SHAPE_DOWN);
 				break;
 		}
 		

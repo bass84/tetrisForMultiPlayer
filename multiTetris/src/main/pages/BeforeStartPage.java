@@ -17,61 +17,49 @@ public class BeforeStartPage extends IPage{
 		this.navigator = navigator;
 		this.navigator.push(this);
 		this.navigator.peek();
-		this.keyValue = "Type something ";
+		this.keyValue = "";
 	}
 
 	@Override
 	public void drawPage() {
 		// background draw text
+		this.pApplet.background(255);
 		this.mono = this.pApplet.createFont("mono", pApplet.width / 20);
 		this.pApplet.fill(0, 0, 0);
 		this.pApplet.textFont(this.mono);
-		this.pApplet.text("PRESS '1' Then Play Single"
-				, 0 + (pApplet.width / 4.8f)
+		this.pApplet.text("1를 누르시면 1인용 게임을 시작합니다."
+				, 0 + (pApplet.width / 6.8f)
 				, 0 + (pApplet.height / 2.3f));
-		this.pApplet.text("PRESS '2' Then Play Multi"
-				, 0 + (pApplet.width / 4.8f)
+		this.pApplet.text("2를 누르시면 2인용 게임을 시작합니다."
+				, 0 + (pApplet.width / 6.8f)
 				, 3 + (pApplet.height / 1.86f));
 		
 		this.pApplet.text(this.keyValue
-				, 0 + (pApplet.width / 4.8f)
-				, 20 + (pApplet.height / 1.86f));
-		
-		PApplet.println(this.keyValue);
-		
-		
+				, 0 + (pApplet.width / 5.8f)
+				, 5 + (pApplet.height / 3.86f));
 		
 	}
 
+	
 	@Override
 	public void keyPressed(int keyCode) {
 		
 		switch(keyCode) {
-			case 77 :	// press '1'
-				System.out.println("pressed m");
+			case 49 :	// press 's'
+				System.out.println("pressed 1");
 				this.navigator.push(new PlayPage(this.pApplet, 1));
 				this.navigator.peek();
 				break;
-			case 83 :	// press '2'
-				System.out.println("pressed s");
-				this.navigator.push(new PlayPage(this.pApplet, 2));
+			case 50 :	// press 'm'
+				System.out.println("pressed 2");
+				this.navigator.push(new RoomMakingPage(this.pApplet, this.navigator));
 				this.navigator.peek();
 				break;
-			case 48 :
-			case 49 :
-			case 50 :
-			case 51 :
-			case 52 :
-			case 53 :
-			case 54 :
-			case 55 :
-			case 56 :
 			case 57 :
 				this.keyValue += (keyCode - 48);
 				break;
 			case 8 :
 				this.keyValue = this.keyValue.substring(0, (this.keyValue.length() - 1) >= 0 ? this.keyValue.length() - 1 : 0);
-				this.pApplet.clear();
 				break;
 			
 				

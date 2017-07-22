@@ -1,6 +1,7 @@
 package main;
 
 import main.ShapeMapping.Kind;
+import main.keyEvent.GameKeyType.GameKey;
 import processing.core.PApplet;
 import processing.core.PConstants;
 import processing.core.PFont;
@@ -47,6 +48,10 @@ public class Tetris {
 				this.usedBlock[i][j] = usedBlock[i][j];
 			}
 		}
+	}
+
+	public int getInterval() {
+		return interval;
 	}
 	
 	public void setTotalScore(int totalScore) {
@@ -120,6 +125,7 @@ public class Tetris {
 	}
 	
 	public boolean drawTetris() {
+		
 		// 도형이 바닥에 닿는다면
 		if(this.grid.isBottom(this.usedBlock, this.shape)) {
 			
@@ -146,8 +152,6 @@ public class Tetris {
 			// 현재 움직이는 도형 그리기
 			this.drawShape();
 			
-			// 바닥에 닿지 않으면 계속 내려감
-			this.moveShapeDownByTime();
 			
 			// draw text
 			this.mono = pApplet.createFont("mono", width / 30);
@@ -210,31 +214,59 @@ public class Tetris {
 		return false;
 	}
 	
+	public void move(GameKey key) {
+		switch(key) {
+			case DROP_SHAPE :
+				this.dropShape();
+				break;
+				
+			case MOVE_SHAPE_LEFT :
+				this.moveShapeLeft();
+				break;
+			
+			case MOVE_SHAPE_RIGHT :
+				this.moveShapeRight();
+				break;
+				
+			case ROTATE_SHAPE :
+				this.rotateShape();
+				break;
+				
+			case MOVE_SHAPE_DOWN :
+				this.moveShapeDown();
+				break;
+			
+			case MOVE_SHAPE_DOWN_BY_TIME :
+				this.moveShapeDownByTime();
+				break;
+		}
+	}
 	
-	public void moveShapeDownByTime() {
+	
+	private void moveShapeDownByTime() {
 		if(pApplet.frameCount % this.interval == 0) this.shape.increasePositionY();
 	}
 	
-	public void moveShapeLeft() {
+	private void moveShapeLeft() {
 		if(!grid.isLeftEnd(usedBlock, shape)) shape.decreasePositionX();
 	}
 	
-	public void moveShapeRight() {
+	private void moveShapeRight() {
 		if(!grid.isRightEnd(usedBlock, shape)) shape.increasePositionX();
 	}
 	
-	public void moveShapeDown() {
+	private void moveShapeDown() {
 		if(!grid.isBottom(usedBlock, shape)) shape.increasePositionY();
 	}
 	
-	public void rotateShape() {
+	private void rotateShape() {
 		if(shape.getShapeKind() == Kind.O || !grid.isPossibleRotation(usedBlock, shape)) return;
 		shape.rotate();
 		shape.increaseRotationIdx();
 		this.shapeInfo = this.shape.getShapeInfo();
 	}
 	
-	public void dropShape() {
+	private void dropShape() {
 		while(!this.grid.isBottom(this.usedBlock, this.shape)) {
 			this.shape.increasePositionY();
 		}
