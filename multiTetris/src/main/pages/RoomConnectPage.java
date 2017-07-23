@@ -73,10 +73,11 @@ public class RoomConnectPage extends IPage{
 					//this.port += port.length() > 3 ? "" : (keyCode - 48);
 				}else if(this.connectType == ConnectType.ROOM_MAKING) {
 					if(this.port.length() != 4) return;
-					
-					this.socketThread = new SocketThread(new TetrisServerSocket(Integer.parseInt(this.port), this.navigator, this.pApplet));
-					this.thread = new Thread(this.socketThread);
-					this.thread.start();
+					this.navigator.push(new WaitingGamePage(Integer.parseInt(this.port), this.navigator, this.pApplet));
+					this.navigator.peek();
+					//this.socketThread = new SocketThread(new TetrisServerSocket(Integer.parseInt(this.port), this.navigator, this.pApplet));
+					//this.thread = new Thread(this.socketThread);
+					//this.thread.start();
 					
 					
 				}

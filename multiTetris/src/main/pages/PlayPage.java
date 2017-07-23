@@ -1,6 +1,5 @@
 package main.pages;
 
-import main.RoomConnect.ConnectType;
 import main.Tetris;
 import main.keyEvent.GameKeyType.GameKey;
 import pages.IPage;
