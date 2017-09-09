@@ -75,11 +75,6 @@ public class RoomConnectPage extends IPage{
 					if(this.port.length() != 4) return;
 					this.navigator.push(new WaitingGamePage(Integer.parseInt(this.port), this.navigator, this.pApplet));
 					this.navigator.peek();
-					//this.socketThread = new SocketThread(new TetrisServerSocket(Integer.parseInt(this.port), this.navigator, this.pApplet));
-					//this.thread = new Thread(this.socketThread);
-					//this.thread.start();
-					
-					
 				}
 				break;
 				

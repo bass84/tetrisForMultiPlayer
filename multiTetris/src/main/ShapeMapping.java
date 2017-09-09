@@ -7,14 +7,25 @@ public class ShapeMapping implements Serializable{
 	private static final long serialVersionUID = 2002873879363676629L;
 	
 	public enum Kind implements Serializable{
-		I
-		, J
-		, L
-		, O
-		, S
-		, T
-		, Z
+		I("I")
+		, J("J")
+		, L("L")
+		, O("O")
+		, S("S")
+		, T("T")
+		, Z("Z");
+		
+		private String value;
+		
+		private Kind(String value) {
+			this.value = value;
+		}
+		
+		public String getValue() {
+			return value;
+		}
 	}
+	
 	
 	public int getShapeColor(Kind kind) {
 		switch(kind) {

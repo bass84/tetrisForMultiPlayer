@@ -1,5 +1,7 @@
 package main.pages;
 
+
+import main.socket.ConnectListener;
 import main.socket.Connectable;
 import main.socket.SocketThread;
 import main.socket.TetrisServerSocket;
@@ -8,33 +10,35 @@ import pages.IPage;
 import processing.core.PApplet;
 import processing.core.PFont;
 
-public class WaitingGamePage extends IPage{
+public class WaitingGamePage extends IPage implements ConnectListener{
 	
 	private PApplet pApplet;
 	private PFont mono;
 	private int interval;
 	private boolean isDisplay;
-	private int port;
-	
 	private SocketThread socketThread;
 	private Thread thread;
-	private Connectable TetrisServerSocket;
-	
+	private Connectable tetrisServerSocket;
 	
 	public WaitingGamePage(int port, Navigator navigator, PApplet pApplet) {
-		this.port = port;
 		this.navigator = navigator;
 		this.pApplet = pApplet;
 		this.interval = 0;
 		this.isDisplay = true;
-		
-		this.TetrisServerSocket = new TetrisServerSocket(this.port, this.navigator, this.pApplet);
-		this.socketThread = new SocketThread(this.TetrisServerSocket);
+		this.tetrisServerSocket = new TetrisServerSocket(port);
+		this.tetrisServerSocket.setConnectListener(this);
+		this.socketThread = new SocketThread(this.tetrisServerSocket);
 		this.thread = new Thread(this.socketThread);
 		this.thread.start();
 	}
-
 	
+	public Navigator getNavigator() {
+		return this.navigator;
+	}
+	
+	public PApplet getPApplet() {
+		return this.pApplet;
+	}
 	
 	
 	@Override
@@ -55,9 +59,6 @@ public class WaitingGamePage extends IPage{
 					, 0 + (pApplet.height / 2.3f));
 		}
 	}
-
-	
-	
 	
 	private void increaseInterval() {
 		if(this.interval >= 60) {
@@ -66,19 +67,25 @@ public class WaitingGamePage extends IPage{
 		}
 		else this.interval += 1;
 	}
-
-	
-	
 	
 	@Override
 	public void keyPressed(int keyCode) {
 		switch(keyCode) {
 			case 81 :
-				this.TetrisServerSocket.disConnect();
+				this.tetrisServerSocket.disConnect();
 				this.navigator.pop();
 				break;
 		}
 		
 	}
+
+	@Override
+	public void onConnected() {
+		PlayPage page = new PlayPage(this.pApplet, 2, this.tetrisServerSocket);
+		this.navigator.push(page);
+		this.navigator.peek();
+		System.out.println("게임이 시작되었습니다.");
+	}
+
 
 }

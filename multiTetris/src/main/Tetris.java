@@ -1,12 +1,16 @@
 package main;
 
+import java.io.OutputStream;
+
 import main.ShapeMapping.Kind;
-import main.keyEvent.GameKeyType.GameKey;
+import main.keyEvent.GameKeyType.Information;
+import main.socket.Connectable;
+import main.socket.PlayGameListener;
 import processing.core.PApplet;
 import processing.core.PConstants;
 import processing.core.PFont;
 
-public class Tetris {
+public class Tetris implements PlayGameListener{
 	
 	public final int widthblock = 10;
 	public final int heightblock = 15;
@@ -28,15 +32,35 @@ public class Tetris {
 	private float offsetX;
 	private float offsetY;
 	private int totalPerson;
+	private Connectable tetrisServerSocket;
+	private OutputStream outputStream;
 	
 	public Tetris(PApplet pApplet, int player, int totalPerson) {
 		this.pApplet = pApplet;
-		this.shape = new Shape();
+		//this.shape = new Shape();
+		this.makeNewShape();
 		this.grid = new Grid();
 		this.player = player;
 		this.totalPerson = totalPerson;
 		this.shapeInfo = this.shape.getShapeInfo();
 		this.ratio = 1.6f;
+		
+		for(int i = 0; i < this.usedBlock.length; ++i) this.usedBlock[i][15] = -1;
+		for(int i = 0; i < this.usedBlock[0].length; ++i) this.usedBlock[0][i] = -1;
+	}
+	
+	public Tetris(PApplet pApplet, int player, int totalPerson, Connectable tetrisServerSocket) {
+		this.pApplet = pApplet;
+		//this.shape = new Shape();
+		this.makeNewShape();
+		this.grid = new Grid();
+		this.player = player;
+		this.totalPerson = totalPerson;
+		this.shapeInfo = this.shape.getShapeInfo();
+		this.ratio = 1.6f;
+		this.tetrisServerSocket = tetrisServerSocket;
+		this.outputStream = this.tetrisServerSocket.getOutputStream();
+		this.tetrisServerSocket.setPlayGameListener(this);
 		
 		for(int i = 0; i < this.usedBlock.length; ++i) this.usedBlock[i][15] = -1;
 		for(int i = 0; i < this.usedBlock[0].length; ++i) this.usedBlock[0][i] = -1;
@@ -60,6 +84,14 @@ public class Tetris {
 	
 	public void increaseTotalScore(int addScore) {
 		this.totalScore += addScore;
+	}
+	
+	public Shape getShape() {
+		return this.shape;
+	}
+	
+	public void makeNewShape() {
+		this.shape = new Shape();
 	}
 	
 	public void reset() {
@@ -118,10 +150,6 @@ public class Tetris {
 						, height / heightblock);
 			}
 		}
-		
-		
-		
-		
 	}
 	
 	public boolean drawTetris() {
@@ -136,7 +164,8 @@ public class Tetris {
 			}else{
 				this.addUsedBlock(shape, usedBlock);
 				this.increaseTotalScore(1000);
-				this.shape = new Shape();
+				//this.shape = new Shape();
+				this.makeNewShape();
 				this.usedBlock = this.grid.getNewGridLine(this.usedBlock, this.shape, this);
 				this.shapeInfo = this.shape.getShapeInfo();
 			}
@@ -151,7 +180,6 @@ public class Tetris {
 			
 			// 현재 움직이는 도형 그리기
 			this.drawShape();
-			
 			
 			// draw text
 			this.mono = pApplet.createFont("mono", width / 30);
@@ -214,8 +242,8 @@ public class Tetris {
 		return false;
 	}
 	
-	public void move(GameKey key) {
-		switch(key) {
+	public void move(Information information) {
+		switch(information) {
 			case DROP_SHAPE :
 				this.dropShape();
 				break;
@@ -240,6 +268,7 @@ public class Tetris {
 				this.moveShapeDownByTime();
 				break;
 		}
+		this.sendTetrisInfo(information);
 	}
 	
 	
@@ -271,5 +300,29 @@ public class Tetris {
 			this.shape.increasePositionY();
 		}
 	}
+	
+	@SuppressWarnings("unused")
+	private void sendTetrisInfo() {
+		String shapeInfo = "S:" + this.shape.getShapeKind().getValue();
+		
+		try {
+			this.outputStream.write(shapeInfo.getBytes());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	
+	@SuppressWarnings("unused")
+	private void sendTetrisInfo(Information information) {
+		String movingInfo = "M:" + information.getValue();
+		
+		try {
+			this.outputStream.write(movingInfo.getBytes());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
 	
 }

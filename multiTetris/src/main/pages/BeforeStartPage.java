@@ -47,7 +47,7 @@ public class BeforeStartPage extends IPage{
 		switch(keyCode) {
 			case 49 :	// press 's'
 				System.out.println("pressed 1");
-				this.navigator.push(new PlayPage(this.pApplet, 1));
+				//this.navigator.push(new PlayPage(this.pApplet, 1));
 				this.navigator.peek();
 				break;
 			case 50 :	// press 'm'
