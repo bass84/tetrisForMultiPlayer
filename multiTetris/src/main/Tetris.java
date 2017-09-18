@@ -1,16 +1,14 @@
 package main;
 
-import java.io.OutputStream;
 
 import main.ShapeMapping.Kind;
 import main.keyEvent.GameKeyType.Information;
-import main.socket.Connectable;
 import main.socket.PlayGameListener;
 import processing.core.PApplet;
 import processing.core.PConstants;
 import processing.core.PFont;
 
-public class Tetris implements PlayGameListener{
+public class Tetris{
 	
 	public final int widthblock = 10;
 	public final int heightblock = 15;
@@ -32,13 +30,13 @@ public class Tetris implements PlayGameListener{
 	private float offsetX;
 	private float offsetY;
 	private int totalPerson;
-	private Connectable tetrisServerSocket;
-	private OutputStream outputStream;
+	private boolean isHaveSocket;
+	private PlayGameListener playGameListener;
+	//private Connectable tetrisSocket;
+	//private OutputStream outputStream;
 	
 	public Tetris(PApplet pApplet, int player, int totalPerson) {
 		this.pApplet = pApplet;
-		//this.shape = new Shape();
-		this.makeNewShape();
 		this.grid = new Grid();
 		this.player = player;
 		this.totalPerson = totalPerson;
@@ -49,22 +47,39 @@ public class Tetris implements PlayGameListener{
 		for(int i = 0; i < this.usedBlock[0].length; ++i) this.usedBlock[0][i] = -1;
 	}
 	
-	public Tetris(PApplet pApplet, int player, int totalPerson, Connectable tetrisServerSocket) {
-		this.pApplet = pApplet;
-		//this.shape = new Shape();
-		this.makeNewShape();
-		this.grid = new Grid();
-		this.player = player;
-		this.totalPerson = totalPerson;
-		this.shapeInfo = this.shape.getShapeInfo();
-		this.ratio = 1.6f;
-		this.tetrisServerSocket = tetrisServerSocket;
-		this.outputStream = this.tetrisServerSocket.getOutputStream();
-		this.tetrisServerSocket.setPlayGameListener(this);
-		
-		for(int i = 0; i < this.usedBlock.length; ++i) this.usedBlock[i][15] = -1;
-		for(int i = 0; i < this.usedBlock[0].length; ++i) this.usedBlock[0][i] = -1;
+	public Tetris(PApplet pApplet, int player, int totalPerson, boolean isHaveSocket, PlayGameListener playGameListener) {
+		if(isHaveSocket) {
+			this.isHaveSocket = isHaveSocket;
+			this.pApplet = pApplet;
+			//this.tetrisSocket = tetrisSocket;
+			//this.outputStream = this.tetrisSocket.getOutputStream();
+			this.player = player;
+			//this.makeNewShape();
+			this.playGameListener = playGameListener;
+			this.grid = new Grid();
+			this.totalPerson = totalPerson;
+			//this.shapeInfo = this.shape.getShapeInfo();
+			this.ratio = 1.6f;
+			//this.tetrisSocket.setPlayGameListener(this);
+			
+			for(int i = 0; i < this.usedBlock.length; ++i) this.usedBlock[i][15] = -1;
+			for(int i = 0; i < this.usedBlock[0].length; ++i) this.usedBlock[0][i] = -1;
+		}else {
+			this.isHaveSocket = isHaveSocket;
+			this.pApplet = pApplet;
+			this.player = player;
+			this.totalPerson = totalPerson;
+			this.ratio = 1.6f;
+			this.grid = new Grid();
+			
+			for(int i = 0; i < this.usedBlock.length; ++i) this.usedBlock[i][15] = -1;
+			for(int i = 0; i < this.usedBlock[0].length; ++i) this.usedBlock[0][i] = -1;
+		}
 	}
+	public boolean isHaveSocket() {
+		return this.isHaveSocket;
+	}
+	
 		
 	public void setUsedBlock(int[][] usedBlock) {
 		for(int i = 0; i < usedBlock.length; i++) {
@@ -72,6 +87,10 @@ public class Tetris implements PlayGameListener{
 				this.usedBlock[i][j] = usedBlock[i][j];
 			}
 		}
+	}
+	
+	public int getPlayer() {
+		return this.player;
 	}
 
 	public int getInterval() {
@@ -92,6 +111,13 @@ public class Tetris implements PlayGameListener{
 	
 	public void makeNewShape() {
 		this.shape = new Shape();
+		this.shapeInfo = this.shape.getShapeInfo();
+		if(this.isHaveSocket) this.playGameListener.sendTetrisInfo();
+	}
+	
+	public void makeNewShape(String shapeKind) {
+		this.shape = new Shape(shapeKind);
+		this.shapeInfo = this.shape.getShapeInfo();
 	}
 	
 	public void reset() {
@@ -153,41 +179,43 @@ public class Tetris implements PlayGameListener{
 	}
 	
 	public boolean drawTetris() {
-		
-		// 도형이 바닥에 닿는다면
-		if(this.grid.isBottom(this.usedBlock, this.shape)) {
-			
-			if(this.checkGameOver()) {
-				System.out.println("Game Over!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-				this.drawGameOver();
-				return false;
+		if(this.shape != null) {
+			// 도형이 바닥에 닿는다면
+			if(this.grid.isBottom(this.usedBlock, this.shape)) {
+				
+				if(this.checkGameOver()) {
+					System.out.println("Game Over!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+					this.drawGameOver();
+					return false;
+				}else{
+					this.addUsedBlock(shape, usedBlock);
+					this.increaseTotalScore(1000);
+					//this.shape = new Shape();
+					this.makeNewShape();
+					this.usedBlock = this.grid.getNewGridLine(this.usedBlock, this.shape, this);
+					this.shapeInfo = this.shape.getShapeInfo();
+				}
+				
+			// 도형이 바닥에 닿지 않은 상태일 경우
 			}else{
-				this.addUsedBlock(shape, usedBlock);
-				this.increaseTotalScore(1000);
-				//this.shape = new Shape();
-				this.makeNewShape();
-				this.usedBlock = this.grid.getNewGridLine(this.usedBlock, this.shape, this);
-				this.shapeInfo = this.shape.getShapeInfo();
+				if(this.player != 1) System.out.println("plyaer2");
+				// 배경 그리기
+				this.drawBackground();
+				
+				// 도형 전체 그리기
+				this.drawGrid();
+				
+				// 현재 움직이는 도형 그리기
+				this.drawShape();
+				
+				// draw text
+				this.mono = pApplet.createFont("mono", width / 30);
+				pApplet.textFont((PFont) this.mono);
+				pApplet.fill(0, 0, 0);
+				pApplet.textAlign(PConstants.LEFT, PConstants.CENTER);
+				pApplet.text("SCORE : " + this.totalScore, offsetX + (2.0f * ratio)
+						, offsetY + (8.0f * ratio));
 			}
-			
-		// 도형이 바닥에 닿지 않은 상태일 경우
-		}else{
-			// 배경 그리기
-			this.drawBackground();
-			
-			// 도형 전체 그리기
-			this.drawGrid();
-			
-			// 현재 움직이는 도형 그리기
-			this.drawShape();
-			
-			// draw text
-			this.mono = pApplet.createFont("mono", width / 30);
-			pApplet.textFont((PFont) this.mono);
-			pApplet.fill(0, 0, 0);
-			pApplet.textAlign(PConstants.LEFT, PConstants.CENTER);
-			pApplet.text("SCORE : " + this.totalScore, offsetX + (2.0f * ratio)
-					, offsetY + (8.0f * ratio));
 		}
 		
 		return true;
@@ -268,7 +296,7 @@ public class Tetris implements PlayGameListener{
 				this.moveShapeDownByTime();
 				break;
 		}
-		this.sendTetrisInfo(information);
+		if(this.isHaveSocket) this.playGameListener.sendTetrisInfo(information);
 	}
 	
 	
@@ -300,29 +328,49 @@ public class Tetris implements PlayGameListener{
 			this.shape.increasePositionY();
 		}
 	}
-	
-	@SuppressWarnings("unused")
-	private void sendTetrisInfo() {
-		String shapeInfo = "S:" + this.shape.getShapeKind().getValue();
+
+	public void setShapeInfo(int[][] shapeInfo) {
+		this.shapeInfo = shapeInfo;
 		
-		try {
-			this.outputStream.write(shapeInfo.getBytes());
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
 	}
 	
 	
-	@SuppressWarnings("unused")
-	private void sendTetrisInfo(Information information) {
-		String movingInfo = "M:" + information.getValue();
-		
-		try {
-			this.outputStream.write(movingInfo.getBytes());
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+//	/*로컬 사용자의 도형 정보를 보낸다.*/
+//	private void sendTetrisInfo() {
+//		String shapeInfo = "S:" + this.shape.getShapeKind().getValue() + "\n";
+//		
+//		try {
+//			this.outputStream.write(shapeInfo.getBytes());
+//			System.out.println("**테트리스 도형에 대한 정보를 전송하였습니다. player = " + this.player);
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+//	}
+//	
+//	/*로컬 사용자의 움직임 정보를 보낸다.*/
+//	private void sendTetrisInfo(Information information) {
+//		String movingInfo = "M:" + Information.valueOf(information.name()) + "\n";
+//		
+//		try {
+//			this.outputStream.write(movingInfo.getBytes());
+//			System.out.println("** 테트리스 위치에 대한 정보를 전송하였습니다.");
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+//	}
+//	
+//	
+//	/*네트워크 사용자의 값을 분석한다.*/
+//	public void resolveNetworkUserValue(String response) {
+//		if(response == null || response.equals("")) return;
+//		
+//		String[] responseArray = response.split(":");
+//		/*'S'이면 도형이다.*/
+//		if(responseArray[0].equals("S")) this.makeNewShape(responseArray[1]);
+//		/*'M'이면 움직임에 관한 것이다.*/
+//		else if(responseArray[0].equals("M")) this.move(Information.valueOf(responseArray[1]));
+//		
+//	}
 	
 	
 }

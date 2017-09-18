@@ -40,8 +40,8 @@ public class RoomMakingPage extends IPage{
 		switch(keyCode) {
 			case 49 :	// press '1'
 				System.out.println("pressed 1");
-				//this.navigator.push(new PlayPage(this.pApplet, 1));
-				//this.navigator.peek();
+				this.navigator.push(new RoomConnectPage(this.pApplet, ConnectType.ROOM_CONNECT, navigator));
+				this.navigator.peek();
 				break;
 			case 50 :	// press '2'
 				System.out.println("pressed 2");

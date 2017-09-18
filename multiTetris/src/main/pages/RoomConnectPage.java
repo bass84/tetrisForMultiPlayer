@@ -13,8 +13,6 @@ public class RoomConnectPage extends IPage{
 	private PFont mono;
 	private String port;
 	private ConnectType connectType; // 1 : 다른 방에 연결, 2 : 방 만들기
-	private SocketThread socketThread;
-	private Thread thread;
 	
 	public RoomConnectPage(PApplet pApplet, ConnectType connectType, Navigator navigator) {
 		this.pApplet = pApplet;
@@ -32,7 +30,12 @@ public class RoomConnectPage extends IPage{
 		this.pApplet.textFont(this.mono);
 		
 		if(this.connectType == ConnectType.ROOM_CONNECT) {
-			
+			this.pApplet.text("들어갈 port 번호를 입력하고 enter를 눌러주세요."
+					, 0 + (pApplet.width / 60.0f)
+					, 0 + (pApplet.height / 2.3f));
+			this.pApplet.text(this.port
+					, 0 + (pApplet.width / 6.8f)
+					, 2 + (pApplet.height / 2.1f));
 			
 		}else if(this.connectType == ConnectType.ROOM_MAKING) {
 			this.pApplet.text("port 번호를 입력하고 enter를 눌러주세요."
@@ -59,18 +62,18 @@ public class RoomConnectPage extends IPage{
 			case 55 :
 			case 56 :
 			case 57 :
-				if(this.connectType == ConnectType.ROOM_CONNECT) {
-					//this.port += port.length() > 3 ? "" : (keyCode - 48);
-				}else if(this.connectType == ConnectType.ROOM_MAKING) {
-					this.port += port.length() > 3 ? "" : (keyCode - 48);
-				}
+				this.port += port.length() > 3 ? "" : (keyCode - 48);
 				break;
 			case 8 : // pressed 'backspace"
 				this.port = this.port.substring(0, (this.port.length() - 1) >= 0 ? this.port.length() - 1 : 0);
 				break;
 			case 10 : //pressed 'enter'
+				if(this.port.length() != 4) return;
+				
 				if(this.connectType == ConnectType.ROOM_CONNECT) {
-					//this.port += port.length() > 3 ? "" : (keyCode - 48);
+					if(this.port.length() != 4) return;
+					this.navigator.push(new WaitingGamePage(Integer.parseInt(this.port), this.navigator, this.pApplet));
+					this.navigator.peek();
 				}else if(this.connectType == ConnectType.ROOM_MAKING) {
 					if(this.port.length() != 4) return;
 					this.navigator.push(new WaitingGamePage(Integer.parseInt(this.port), this.navigator, this.pApplet));

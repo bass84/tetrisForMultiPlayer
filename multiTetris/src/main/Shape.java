@@ -34,6 +34,19 @@ public class Shape implements Serializable, Cloneable{
 		this.curRotationIdx = 0;
 	}
 	
+	public Shape(String shapeKind) {
+		for(Kind kind : Kind.values()) {
+			if(kind.getValue().equals(shapeKind)) this.shapeKind = kind; 
+		}
+		this.shapeMapping = new ShapeMapping();
+		this.shapeInfo = this.shapeMapping.getShapeInfo(this.shapeKind)[0];
+		this.positionX = this.shapeMapping.getMovingValue(this.shapeKind)[0];
+		this.positionY = this.shapeMapping.getMovingValue(this.shapeKind)[1];
+		this.rotationLimit = this.shapeMapping.getRotationLimit(this.shapeKind);
+		this.shapeColor = this.shapeMapping.getShapeColor(this.shapeKind);
+		this.curRotationIdx = 0;
+	}
+	
 	public int[][] getShapeInfo() {return this.shapeInfo;}
 	public Kind getShapeKind() {return this.shapeKind;}
 	public int getPositionX() {return this.positionX;}

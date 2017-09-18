@@ -1,24 +1,25 @@
 package main.socket;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.Date;
 
-import main.pages.PlayPage;
-import main.pages.WaitingGamePage;
-import navigator.Navigator;
-import processing.core.PApplet;
 
 public class TetrisServerSocket implements Connectable{
 	private final int PORT;
 	private ServerSocket serverSocket;
 	private Socket socket;
-	private OutputStream stream;
+	private OutputStream outputStream;
 	private ConnectListener connectListener;
 	private PlayGameListener playGameListener;
-	private boolean isGameOver;
+	
+	private InputStream inputStream = null;
+	private BufferedReader bufferedReader = null;
+	private String response = null;
 	
 	public TetrisServerSocket() {
 		this.PORT = 0;
@@ -43,7 +44,7 @@ public class TetrisServerSocket implements Connectable{
 	
 	
 	public OutputStream getOutputStream(){
-		return this.stream;
+		return this.outputStream;
 	}
 
 	@Override
@@ -61,39 +62,34 @@ public class TetrisServerSocket implements Connectable{
 			
 			
 			try {
-				this.stream = this.socket.getOutputStream();
+				this.outputStream = this.socket.getOutputStream();
+				
+				this.outputStream.write("==== 안녕하세요? 테트리스 서버에 들어오신 것을 환영합니다. ====".getBytes());
+				//stream.write(new Date().toString().getBytes());
+				this.outputStream.write("\n".getBytes());
+				
 				this.connectListener.onConnected();
 				
-				this.stream.write("==== 안녕하세요? 테트리스 서버에 들어오신 것을 환영합니다. ====".getBytes());
-				//stream.write(new Date().toString().getBytes());
-				this.stream.write("\n".getBytes());
+				inputStream = this.socket.getInputStream();
+				bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
 				
-				while(!isGameOver) {
-					
+				while(true) {
+					response = bufferedReader.readLine();
+					System.out.println(">> 클라이언트로부터 온 수신 내용 : " + response);
+					this.playGameListener.resolveNetworkUserValue(response);
 				}
+				
 				
 				
 			} catch (Exception e) {
 				e.printStackTrace();
-			} finally {
-				//socket.close();
-			}
+			} 
 			
 			
 			
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
-	}
-	
-	@Override
-	public void send() {
-		
-	}
-	
-	@Override
-	public void receive() {
 		
 	}
 	

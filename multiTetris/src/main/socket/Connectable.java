@@ -8,10 +8,6 @@ public interface Connectable {
 	
 	public void disConnect();
 	
-	public void send();
-	
-	public void receive();
-	
 	public void setConnectListener(ConnectListener listener);
 	
 	public OutputStream getOutputStream();
