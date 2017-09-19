@@ -68,13 +68,13 @@ public class TetrisServerSocket implements Connectable{
 				
 				this.connectListener.onConnected();
 				
-				inputStream = this.socket.getInputStream();
-				bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+				this.inputStream = this.socket.getInputStream();
+				this.bufferedReader = new BufferedReader(new InputStreamReader(this.inputStream));
 				
 				while(true) {
-					response = bufferedReader.readLine();
-					System.out.println(">> 클라이언트로부터 온 수신 내용 : " + response);
-					this.playGameListener.resolveNetworkUserValue(response);
+					this.response = bufferedReader.readLine();
+					System.out.println(">> 클라이언트로부터 온 수신 내용 : " + this.response);
+					this.playGameListener.resolveNetworkUserValue(this.response);
 				}
 				
 			} catch (Exception e) {

@@ -30,17 +30,26 @@ public class TetrisClientSocket implements Connectable{
 			
 			System.out.println(">> PORT(" + this.port + ")로 접속을 시도합니다.");
 			
-			this.inputStream = this.socket.getInputStream();
-			this.outputStream = this.socket.getOutputStream();
-			
-			this.bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-			
-			while(true) {
-				this.response = this.bufferedReader.readLine();
-				System.out.println(">> 서버로부터 온 수신 내용 : " + response);
-				this.playGameListener.resolveNetworkUserValue(response);
+			try {
+				this.outputStream = this.socket.getOutputStream();
 				
+				this.outputStream.write("==== 안녕하세요? 테트리스 서버에 들어오신 것을 환영합니다. ==== \n".getBytes());
+				
+				this.connectListener.onConnected();
+				
+				this.inputStream = this.socket.getInputStream();
+				this.bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+				
+				while(true) {
+					this.response = this.bufferedReader.readLine();
+					System.out.println(">> 서버로부터 온 수신 내용 : " + this.response);
+					this.playGameListener.resolveNetworkUserValue(this.response);
+					
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
+			
 			
 		} catch (Exception e) {
 			e.printStackTrace();
