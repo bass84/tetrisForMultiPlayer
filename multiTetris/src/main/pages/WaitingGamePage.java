@@ -4,6 +4,7 @@ package main.pages;
 import main.socket.ConnectListener;
 import main.socket.Connectable;
 import main.socket.SocketThread;
+import main.socket.TetrisClientSocket;
 import main.socket.TetrisServerSocket;
 import navigator.Navigator;
 import pages.IPage;
@@ -18,16 +19,16 @@ public class WaitingGamePage extends IPage implements ConnectListener{
 	private boolean isDisplay;
 	private SocketThread socketThread;
 	private Thread thread;
-	private Connectable tetrisServerSocket;
+	private Connectable tetrisSocket;
 	
-	public WaitingGamePage(int port, Navigator navigator, PApplet pApplet) {
+	public WaitingGamePage(int port, Navigator navigator, PApplet pApplet, int socketCode) {
 		this.navigator = navigator;
 		this.pApplet = pApplet;
 		this.interval = 0;
 		this.isDisplay = true;
-		this.tetrisServerSocket = new TetrisServerSocket(port);
-		this.tetrisServerSocket.setConnectListener(this);
-		this.socketThread = new SocketThread(this.tetrisServerSocket);
+		this.tetrisSocket = socketCode == 1 ? new TetrisClientSocket(port) : new TetrisServerSocket(port);
+		this.tetrisSocket.setConnectListener(this);
+		this.socketThread = new SocketThread(this.tetrisSocket);
 		this.thread = new Thread(this.socketThread);
 		this.thread.start();
 	}
@@ -72,7 +73,7 @@ public class WaitingGamePage extends IPage implements ConnectListener{
 	public void keyPressed(int keyCode) {
 		switch(keyCode) {
 			case 81 :
-				this.tetrisServerSocket.disConnect();
+				this.tetrisSocket.disConnect();
 				this.navigator.pop();
 				break;
 		}
@@ -81,7 +82,7 @@ public class WaitingGamePage extends IPage implements ConnectListener{
 
 	@Override
 	public void onConnected() {
-		PlayPage page = new PlayPage(this.pApplet, 2, this.tetrisServerSocket);
+		PlayPage page = new PlayPage(this.pApplet, 2, this.tetrisSocket);
 		this.navigator.push(page);
 		this.navigator.peek();
 		System.out.println("게임이 시작되었습니다.");

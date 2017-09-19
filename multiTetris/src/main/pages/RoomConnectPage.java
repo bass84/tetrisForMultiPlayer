@@ -72,11 +72,11 @@ public class RoomConnectPage extends IPage{
 				
 				if(this.connectType == ConnectType.ROOM_CONNECT) {
 					if(this.port.length() != 4) return;
-					this.navigator.push(new WaitingGamePage(Integer.parseInt(this.port), this.navigator, this.pApplet));
+					this.navigator.push(new WaitingGamePage(Integer.parseInt(this.port), this.navigator, this.pApplet, 1));
 					this.navigator.peek();
 				}else if(this.connectType == ConnectType.ROOM_MAKING) {
 					if(this.port.length() != 4) return;
-					this.navigator.push(new WaitingGamePage(Integer.parseInt(this.port), this.navigator, this.pApplet));
+					this.navigator.push(new WaitingGamePage(Integer.parseInt(this.port), this.navigator, this.pApplet, 2));
 					this.navigator.peek();
 				}
 				break;

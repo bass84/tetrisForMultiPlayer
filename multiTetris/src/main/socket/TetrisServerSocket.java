@@ -10,7 +10,7 @@ import java.net.Socket;
 
 
 public class TetrisServerSocket implements Connectable{
-	private final int PORT;
+	private final int port;
 	private ServerSocket serverSocket;
 	private Socket socket;
 	private OutputStream outputStream;
@@ -22,11 +22,11 @@ public class TetrisServerSocket implements Connectable{
 	private String response = null;
 	
 	public TetrisServerSocket() {
-		this.PORT = 0;
+		this.port = 0;
 	}
 	
 	public TetrisServerSocket(int port) {
-		this.PORT = port;
+		this.port = port;
 		this.serverSocket = null;
 		this.socket = null;
 		
@@ -51,7 +51,7 @@ public class TetrisServerSocket implements Connectable{
 	public void connect() {
 		
 		try {
-			this.serverSocket = new ServerSocket(PORT);
+			this.serverSocket = new ServerSocket(this.port);
 			
 			System.out.println(">> 서버 소켓의 연결을 기다립니다.");
 			
@@ -64,9 +64,7 @@ public class TetrisServerSocket implements Connectable{
 			try {
 				this.outputStream = this.socket.getOutputStream();
 				
-				this.outputStream.write("==== 안녕하세요? 테트리스 서버에 들어오신 것을 환영합니다. ====".getBytes());
-				//stream.write(new Date().toString().getBytes());
-				this.outputStream.write("\n".getBytes());
+				this.outputStream.write("==== 안녕하세요? 테트리스 서버에 들어오신 것을 환영합니다. ==== \n".getBytes());
 				
 				this.connectListener.onConnected();
 				
@@ -79,13 +77,9 @@ public class TetrisServerSocket implements Connectable{
 					this.playGameListener.resolveNetworkUserValue(response);
 				}
 				
-				
-				
 			} catch (Exception e) {
 				e.printStackTrace();
 			} 
-			
-			
 			
 		} catch (IOException e) {
 			e.printStackTrace();
